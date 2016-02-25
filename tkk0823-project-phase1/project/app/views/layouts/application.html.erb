@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body{
+          background-color: linen;
+        }
+          table, th, td{
+          text-align: center;
+          padding: 15px;
+        }
+    .left{
+      width: 300px;
+      height: 200px;
+      float: left;
+      margin-left: 100px;
+         }
+    .right{
+       width: 300px;
+      height: 200px;
+      float: right;
+      margin-right: 100px;
+        }
+  </style>
+  
+  <title>Project</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+  <script src="https://code.jquery.com/jquery-2.1.3.js"></script>
+  <script type="text/javascript"src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwb4O1STnycjtN3YUoFwg6gM4Nq82ear0"></script>
+  <script src="https://code.jquery.com/jquery-2.1.3.js"></script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script >
+    //function for dots on map
+    function look(id){
+      //console.log(id);
+      $.get("/api/project/"+id,function(data,status){
+        console.log(data.longitude);
+        console.log(data.latitude);
+        var source ="https://maps.googleapis.com/maps/api/staticmap?center="+data.latitude+","+data.longitude+"&zoom=5&size=600x300&maptype=roadmap&markers=color:red%7Clabel:S%7C"+data.latitude+","+data.longitude;
+        //console.log(source);
+        document.getElementById("get").innerHTML="<img src ="+source+"></img>";
+      });
+    }
+     //function end
+     //fubction for retrieving json data
+      $(document).ready(function(){
+      $('#button').on('click',function(){
+      $.ajax({
+        type: 'GET',
+        url: '/project/show',
+        success: function(data){
+          //dataArr = data;
+          for (var x in data ){
+          //alert(dataArr[0].name);
+            console.log(data[x]);
+            $("#tab").append('<tr><td>'+data[x].id+'</td>'+
+                        '<td>'+data[x].name+'</td>'+
+                         '<td>'+data[x].design+'</td>'+
+                          '<td>'+data[x].year+'</td>'+
+                           '<td>'+data[x].type+'</td>'+
+                           '<td>'+data[x].ppl+'</td>'+
+                            '<td >'+'<button align="center" onclick="look(\''+data[x].id+'\')">'+data[x].location+'</button></td></tr>');
+                              }
+                            },
+         error: function( ){
+         alert('error');}
+         });
+       });
+    });
+  //function end
+  //function for pie chart
+   google.load("visualization", "1", {packages:["corechart"]});
+   google.setOnLoadCallback(drawChart);
+    function drawChart() {
+    $(document).ready(function(){
+    $.ajax({
+      type: 'GET',
+      url: '/project/show',
+      success: function(key){
+      dataArr = key;
+        for (var x in key ){
+        //alert(dataArr[0].name);
+        var data = google.visualization.arrayToDataTable([
+          ['Program', 'People'],
+          [dataArr[0].name, dataArr[0].ppl],
+          [dataArr[1].name, dataArr[1].ppl],
+          [dataArr[2].name, dataArr[2].ppl],
+          
+        ]);
+     }
+        var options = {
+          title: 'People using languages',
+          is3D: true,
+        };
+         var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+        chart.draw(data, options);
+      }
+   });
+   });
+   }
+</script>
+</head>
+<body>
+<%= yield %>
+<div id="get" class="left"></div>
+<br><br>  
+<div id="piechart_3d" class="right"></div>
+</body>
+</html>
