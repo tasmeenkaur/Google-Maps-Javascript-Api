@@ -1,10 +1,5 @@
 # WEB DATA MANAGEMENT - PROJECT PHASE 1
 
-TASMEEN KAUR
-------------
-------------
-STUDENT ID:1001150823
-----------------------
 
 VERSIONS USED:
 
